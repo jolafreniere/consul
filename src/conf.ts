@@ -98,19 +98,15 @@ let conf : IConfig = {
                     },
                     {
                         label: "Rune Record Count",
-                        getValue: utils.countNameFx("Rune"),
-                    },
-                    {
-                        label: "Rune Record Count",
-                        getValue: utils.countNameFx("Rune"),
+                        getValue: utils.countPropertyContainsStrFx("name", "Rune"),
                     },
                     {
                         label: "Parch Record Count",
-                        getValue: utils.countNameFx("Parchemin"),
+                        getValue: utils.countPropertyContainsStrFx("name", "Parchemin"),
                     },
                     {
                         label: "Galet Record Count",
-                        getValue: utils.countNameFx("Parchemin"),
+                        getValue: utils.countPropertyContainsStrFx("name", "Galet"),
                     }
                 ]
             }

@@ -12,16 +12,31 @@ const data = [
 describe("Aggregator Tests", () => {
     describe ("Name Aggregator Tests", () => {
         it("Should find one matching name that contains 'Amy'", () => {
-            expect(utils.countNameFx("Amy")(data)).to.equal(1);
+            expect(utils.countPropertyContainsStrFx("name", "Amy")(data)).to.equal(1);
         })
         it("Should find two matching names containing the letter J", () => {
-            expect(utils.countNameFx("J")(data)).to.equal(2);
+            expect(utils.countPropertyContainsStrFx("name", "J")(data)).to.equal(2);
         })
         it("Should find two names containing the letter o", () => {
-            expect(utils.countNameFx("o")(data)).to.equal(2);
+            expect(utils.countPropertyContainsStrFx("name", "o")(data)).to.equal(2);
+        })
+        it("Should find one name that matches John", () => {
+            expect(utils.countPropertyContainsStrFx("name", "John")(data)).to.equal(1);
+        })
+        it("Should find one name that matches John regardless of capitalization", () => {
+            expect(utils.countPropertyContainsStrFx("name", "joHN")(data)).to.equal(1);
         })
         it("Should not find any names", () => {
-            expect(utils.countNameFx("Z")(data)).to.equal(0);
+            expect(utils.countPropertyContainsStrFx("name", "Z")(data)).to.equal(0);
+        });
+        it("Should find one female", () => {
+            expect(utils.countPropertyContainsStrFx("gender", "F")(data)).to.equal(1);
+        });
+        it("Should find three males", () => {
+            expect(utils.countPropertyContainsStrFx("gender", "M")(data)).to.equal(3);
+        });
+        it("Should find three males by ignoring capitalization", () => {
+            expect(utils.countPropertyContainsStrFx("gender", "m")(data)).to.equal(3);
         });
     });
     describe ("Count All Tests", () => {
