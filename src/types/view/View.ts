@@ -81,6 +81,7 @@ export class View implements IView {
         } else {
             this.relevantData = this.dataSource
         }
+        this.panel.setDataSource(this.relevantData);
     }
 
     private renderRows(filter?: (item: any) => boolean) {

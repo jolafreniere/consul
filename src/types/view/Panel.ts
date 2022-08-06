@@ -4,6 +4,7 @@ export interface IPanel {
     panelItems: IPanelItem[];
     rowCount: number;
     columnCount: number;
+    setDataSource(dataSource: any[]): void;
     render: (relevantData?:any[])=>void;
     addItem: (item: IPanelItem)=>void;
 }
@@ -23,6 +24,9 @@ export class Panel implements IPanel {
 
     public setDataSource(datasource: any[]){
         this.dataSource = datasource;
+        for(let i = 0; i < this.panelItems.length; i++) {
+            this.panelItems[i].dataSource = datasource;
+        }
     }
 
     public addItem(item: IPanelItem) {
@@ -41,6 +45,7 @@ export class Panel implements IPanel {
         for(let i = 1; i <= this.panelItems.length; i++){
             let panelItem = this.panelItems[i-1];
             let itemString = panelItem.getItemValue();
+
             row += `  ${colors.bold(panelItem.label)}: ${itemString}`.padEnd(itemMaxWidth -1);
             if(i % this.columnCount == 0 ) {
                 console.log(row);
