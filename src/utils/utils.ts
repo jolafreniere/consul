@@ -10,3 +10,12 @@ module.exports.addMargins = function(alignment: Align, value : string | number ,
         return value.padStart(value.length + 1).padEnd(value.length + 2).padStart(columnWidth/2+1).padEnd(columnWidth);
     } else return value;
 }
+
+module.exports.formatDate = function (date){
+    let hours = "0" + (date.getHours()).toString();
+    let minutes =  "0"+(date.getMinutes()).toString();
+    let seconds =  "0"+(date.getSeconds()).toString();
+    let month = "0" + (date.getMonth() + 1);
+    let day = "0" + date.getDate();
+    return month.substr(-2)+"-"+day.substr(-2)+" "+hours.substr(-2)+":"+minutes.substr(-2)+":"+seconds.substr(-2);
+}

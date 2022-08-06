@@ -1,5 +1,7 @@
 node_modules/
 *.js
-*.map
+*.js.map
+dist
 yarn-error.log
 yarn.lock
+data
