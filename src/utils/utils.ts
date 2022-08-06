@@ -19,3 +19,15 @@ module.exports.formatDate = function (date){
     let day = "0" + date.getDate();
     return month.substr(-2)+"-"+day.substr(-2)+" "+hours.substr(-2)+":"+minutes.substr(-2)+":"+seconds.substr(-2);
 }
+
+module.exports.countNameFx = function(value: string, dataSource){
+    return function(data: any[]){
+        let count = 0;
+        for(let i = 0; i < data.length; i++){
+            if(data[i]["name"] === value){
+                count++;
+            }
+        }
+        return count;
+    }
+}

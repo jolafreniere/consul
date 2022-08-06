@@ -1,7 +1,7 @@
 node_modules/
+dist/
 *.js
 *.js.map
-dist
 yarn-error.log
 yarn.lock
 data

@@ -3,10 +3,10 @@ const utils = require("../../utils/utils");
 import {Align} from "./Constants"
 
 export interface IHeader {
-    "index": number;
+    "headerType": "simple"
     "property": string;
     "type"?: string;
-    "displayName"?: string;
+    "label"?: string;
     "length"?: number;
     "alignment"?: Align;
     "sortable"?: boolean;
@@ -20,8 +20,9 @@ function defaultColorizer(formattedValue: any, value: string): string {
 }
 
 export class Header implements IHeader {
+    headerType: "simple"
     index: number;
-    displayName: string;
+    label: string;
     type: string;
     length: number;
     property: string;
@@ -31,19 +32,18 @@ export class Header implements IHeader {
     colorizer: (formattedValue: any, value: string) => string;
 
     constructor(header: IHeader) {
-        this.index = header.index;
+        this.index = null;
         this.property = header.property;
-
         this.alignment = header.alignment || Align.Left;
         this.type = header.type || "string";
-        this.displayName = header.displayName || header.property;
+        this.label = header.label || header.property;
         this.length = header.length || 30;
         this.sortable = header.sortable || false;
         this.formatter = header.formatter || this.getFormatter();
         this.colorizer = header.colorizer || defaultColorizer
 
-        if( header.length < this.displayName.length){
-            this.length = this.displayName.length;
+        if( header.length < this.label.length){
+            this.length = this.label.length;
         }
     }
 
@@ -58,7 +58,7 @@ export class Header implements IHeader {
             return (value: any) => value;
         }
         if(this.type == "date"){
-            return (value: any) => utils.formatDate(value);
+            return (value: any) => utils.formatDate(new Date(value)); //TODO: handle parsing elsewhere
         }
         return (value: any) => value;
     }
@@ -82,13 +82,13 @@ export class Header implements IHeader {
     }
 
     public toString(){
-        return colors.bold(utils.addMargins(Align.Left, this.displayName, this.length));
+        return colors.bold(utils.addMargins(Align.Left, this.label, this.length));
     }
 }
 
-interface IComputedHeader {
-    "index": number;
-    "displayName": string;
+export interface IComputedHeader {
+    "headerType": "computed",
+    "label": string;
     "computeValue": (item: any) => any;
     "type"?: string;
     "length"?: number;
@@ -99,8 +99,9 @@ interface IComputedHeader {
 }
 
 export class ComputedHeader implements IComputedHeader {
+    headerType: "computed"
     index: number;
-    displayName: string;
+    label: string;
     type: string;
     length: number;
     sortable: boolean;
@@ -110,19 +111,19 @@ export class ComputedHeader implements IComputedHeader {
     colorizer: (value: any, formattedValue: string) => string;
 
     constructor(header: IComputedHeader) {
-        this.index = header.index;
+        this.index = null;
 
 
         this.alignment = header.alignment || Align.Left;
         this.type = header.type || "string";
-        this.displayName = header.displayName
+        this.label = header.label
         this.length = header.length || 30;
         this.sortable = header.sortable || false;
         this.formatter = header.formatter || (value => value);
         this.colorizer = header.colorizer || (value => value);
         this.computeValue = header.computeValue;
-        if( header.length < this.displayName.length){
-            this.length = this.displayName.length;
+        if( header.length < this.label.length){
+            this.length = this.label.length;
         }
     }
 
@@ -141,6 +142,6 @@ export class ComputedHeader implements IComputedHeader {
     }
 
     public toString(){
-        return colors.bold(utils.addMargins(Align.Left, this.displayName, this.length));
+        return colors.bold(utils.addMargins(Align.Left, this.label, this.length));
     }
 }

@@ -1,35 +1,47 @@
-import {Header, ComputedHeader} from "./Header"
-import {Panel} from "./Panel"
+import {Header, ComputedHeader, IHeader, IComputedHeader} from "./Header"
+import {Panel, IPanel} from "./Panel"
+import fs from "fs-extra";
 import {PanelItem} from "./PanelItem"
-interface IView {
+export interface IView {
     "viewName": string;
-    "panelItems"?: PanelItem[];
-    "headers": (Header|ComputedHeader)[];
-    "dataSource": any[];
+    "dataPath": string;
+    "panel": IPanel;
+    "headers": (IHeader|IComputedHeader)[];
 }
 
 export class View implements IView {
     viewName: string;
-    headers: (Header|ComputedHeader)[];
+    headers: (Header|ComputedHeader)[] = [];
     dataSource:  any[];
+    dataPath: string;
     relevantData: any[];
     consoleWidth: number;
     consoleHeight: number;
     panelHeight: number;
-    panel = null;
+    panel : IPanel;
     constructor(args : IView) {
         this.viewName = args.viewName;
-        this.headers = args.headers;
-        this.dataSource = args.dataSource;
+        this.dataPath = args.dataPath;
+        this.dataSource = fs.readJsonSync(args.dataPath);
 
-        if(args.panelItems) {
-            this.panel = new Panel({"columnCount": 5, "rowCount": 3, "panelItems": args.panelItems, "dataSource": args.dataSource});
+        for(let i = 0; i < args.headers.length; i++){
+            let header = args.headers[i];
+            if(header.headerType == "computed") {
+                    let compHeader : ComputedHeader = new ComputedHeader(header);
+                    compHeader.index = i;
+                    this.headers.push(compHeader);
+            } else {
+                    let simpHeader : Header = new Header(header);
+                    simpHeader.index = i;
+                    this.headers.push(new Header(simpHeader));
+            }
         }
-        this.relevantData = args.dataSource;
-        this.panelHeight = this.panel ? this.panel.rowCount + 1 : 0;
-        this.consoleWidth = process.stdout.columns;
-        this.consoleHeight = process.stdout.rows;
+
+        this.panel = new Panel(args.panel);
+        this.panelHeight = 7;
+        this.relevantData = this.dataSource;
     }
+
 
     public addPanelItem(item: PanelItem) {
         if(this.panel) {
@@ -73,7 +85,7 @@ export class View implements IView {
 
     private renderRows(filter?: (item: any) => boolean) {
         let displayableRowAmount = this.consoleHeight -(4 + this.panelHeight);
-        
+
         if(this.relevantData.length > displayableRowAmount) {
             for(let i = 0; i < displayableRowAmount; i++) {
                 let itemIndex = this.relevantData.length - (displayableRowAmount - i)
