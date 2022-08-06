@@ -14,16 +14,19 @@ export class View implements IView {
     headers: (Header|ComputedHeader)[] = [];
     dataSource:  any[];
     dataPath: string;
-    relevantData: any[];
     consoleWidth: number;
     consoleHeight: number;
     panelHeight: number;
+    private filters : ((item: any) => boolean)[] = [];
+    defaultFilter: (item: any) => boolean;
+    filteredData : any[];
     panel : IPanel;
     constructor(args : IView) {
         this.viewName = args.viewName;
         this.dataPath = args.dataPath;
         this.dataSource = fs.readJsonSync(args.dataPath);
-
+        this.defaultFilter = (item: any) => true;
+        this.filteredData = [];
         for(let i = 0; i < args.headers.length; i++){
             let header = args.headers[i];
             if(header.headerType == "computed") {
@@ -39,7 +42,7 @@ export class View implements IView {
 
         this.panel = new Panel(args.panel);
         this.panelHeight = 7;
-        this.relevantData = this.dataSource;
+        this.updateFilteredData()
     }
 
 
@@ -72,32 +75,30 @@ export class View implements IView {
         console.log()
     }
 
-    private updateRelevantData(filter){
-        this.relevantData = [];
-        if(filter){
-            for(let i = 0; i < this.dataSource.length; i++) {
-                if(filter(this.dataSource[i])) this.relevantData.push(this.dataSource[i]);
-            }
-        } else {
-            this.relevantData = this.dataSource
+    private updateFilteredData() {
+        let filtered = this.dataSource.filter(this.defaultFilter);
+        for(let i = 0; i < this.filters.length; i++){
+            filtered = filtered.filter(this.filters[i]);
         }
-        this.panel.setDataSource(this.relevantData);
+        this.filteredData = filtered;
     }
 
-    private renderRows(filter?: (item: any) => boolean) {
-        let displayableRowAmount = this.consoleHeight -(4 + this.panelHeight);
+    public resetFilters(){
+        this.filters = [this.defaultFilter];
+    }
 
-        if(this.relevantData.length > displayableRowAmount) {
+    private renderRows() {
+        let displayableRowAmount = this.consoleHeight -(4 + this.panelHeight);
+        if(this.filteredData.length > displayableRowAmount) {
             for(let i = 0; i < displayableRowAmount; i++) {
-                let itemIndex = this.relevantData.length - (displayableRowAmount - i)
-                this.renderItem(this.relevantData[itemIndex])
+                let itemIndex = this.filteredData.length - (displayableRowAmount - i)
+                this.renderItem(this.filteredData[itemIndex])
             }
         } else {
-            for(let i = 0; i < this.relevantData.length; i++) {
-                this.renderItem(this.relevantData[i])
+            for(let i = 0; i < this.filteredData.length; i++) {
+                this.renderItem(this.filteredData[i])
             }
         }
-
     }
 
     private renderItem(item: any) {
@@ -112,15 +113,19 @@ export class View implements IView {
         console.log(row);
     }
 
-    public render(filter?: (item: any) => boolean) {
+    public addFilter(filter: (item: any) => boolean) {
+        this.filters.push(filter);
+        this.updateFilteredData();
+    }
+    public render() {
         process.stdout.write('\x1Bc');
         console.clear();
         this.consoleWidth = process.stdout.columns;
         this.consoleHeight = process.stdout.rows;
-        this.updateRelevantData(filter);
+        this.updateFilteredData();
         console.log("\["+this.viewName+"\]");
-        this.renderPanel(this.relevantData);
+        this.renderPanel(this.filteredData);
         this.renderHeaders();
-        this.renderRows(filter);
+        this.renderRows();
     }
 }
