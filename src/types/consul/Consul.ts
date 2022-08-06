@@ -12,7 +12,7 @@ export class Config implements IConfig{
 
 export class Consul {
     views: View[] = [];
-    currentView: number = 0;
+    currentView: View;
     config : IConfig
     constructor(config: IConfig) {
         this.config = config;
@@ -23,12 +23,15 @@ export class Consul {
         for(let i = 0; i < this.config.views.length; i++){
             this.views.push(new View(this.config.views[i]));
         }
-        this.renderView(0)
     }
 
-    public renderView (index: number){
-        this.currentView = index;
-        this.views[index].render();
+    public renderView (index?: number){
+        if(index) {
+            this.currentView = this.views[index];
+        }
+        else {
+            this.currentView = this.views[0];
+        }
+        this.currentView.render();
     }
-
 }
