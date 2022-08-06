@@ -6,19 +6,24 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register src/test/*.test.ts",
     "build": "tsc --sourceMap",
     "watch": "nodemon -e ts --exec \"yarn build && node --inspect dist/index.js\" --ignore \"dist\"",
     "start": "node --experimental-modules dist/index.js"
   },
   "dependencies": {
+    "chai": "^4.3.6",
     "colors": "^1.4.0",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.0.0",
+    "mocha": "^10.0.0",
+    "ts-mocha": "^10.0.0",
     "typescript": "^4.7.4",
+    "typings": "^2.1.1",
     "winston": "^3.8.1"
   },
   "devDependencies": {
+    "@types/mocha": "^9.1.1",
     "@types/node": "^18.6.4"
   }
 }

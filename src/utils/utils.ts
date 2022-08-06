@@ -7,7 +7,7 @@ module.exports.addMargins = function(alignment: Align, value : string | number ,
     } else if(alignment === Align.Right){
         return value.padStart(columnWidth-1).padEnd(columnWidth);
     } else if(alignment === Align.Center){
-        return value.padStart(value.length + 1).padEnd(value.length + 2).padStart(columnWidth/2+1).padEnd(columnWidth);
+        return value.padStart(value.length + 1).padEnd(value.length + 2).padStart((columnWidth/2) +3).padEnd(columnWidth);
     } else return value;
 }
 
@@ -15,7 +15,7 @@ module.exports.formatDate = function (date){
     let hours = "0" + (date.getHours()).toString();
     let minutes =  "0"+(date.getMinutes()).toString();
     let seconds =  "0"+(date.getSeconds()).toString();
-    let month = "0" + (date.getMonth() + 1);
+    let month = "0" + date.getMonth();
     let day = "0" + date.getDate();
     return month.substr(-2)+"-"+day.substr(-2)+" "+hours.substr(-2)+":"+minutes.substr(-2)+":"+seconds.substr(-2);
 }
@@ -29,5 +29,11 @@ module.exports.countNameFx = function(value: string){
             }
         }
         return count;
+    }
+}
+
+module.exports.countAllFx = function(){
+    return function(data){
+        return data.length;
     }
 }

@@ -94,7 +94,7 @@ let conf : IConfig = {
                 panelItems: [
                     {
                         label: "Record Count",
-                        getValue: (x : any[]) => x.length,
+                        getValue: utils.countAllFx(),
                     },
                     {
                         label: "Rune Record Count",
