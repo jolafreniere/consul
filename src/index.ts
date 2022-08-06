@@ -1,9 +1,10 @@
-import {IConfig, Consul} from "./types/consul/Consul";
+import {IConfig, Consul} from "./types/consul/consul";
+import {ConsulCommander} from "./types/ConsulCommander";
 
-async function main(){
+async function main() {
     let conf : IConfig = require("./conf");
     let consul = new Consul(conf);
-    return consul;
+    let consulCommander = new ConsulCommander(consul);
+    await consulCommander.start();
 }
-
 main();
