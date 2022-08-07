@@ -64,8 +64,12 @@ export class View implements IView {
         }
         console.log(bar)
     }
-    public addDataItem(item: any) {
-        this.dataSource.push(item);
+    public addDataItems(items: any[]) {
+        for(let i = 0; i < items.length; i++) {
+            this.dataSource.push(items[i]);
+        }
+        this.updateFilteredData();
+        fs.writeJSONSync(this.dataPath, this.dataSource);
     }
 
     private renderPanel(relevantData?: any[]){

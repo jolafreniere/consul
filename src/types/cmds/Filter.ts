@@ -25,21 +25,41 @@ export class FilterCommand{
             .option("--lt")
             .option("--gt")
             .option("--eq")
+            .option("--contains")
+            .option("--abs")
             .action(
             (property, value, options) => {
                 let filter;
                 if(options.lt){
-                    filter = (x: any)=>{
-                        return x[property] < value;
+                    if(options.abs){
+                        filter = (x: any)=>{
+                            return Math.abs(x[property]) < Math.abs(value);
+                        }
+                    } else {
+                        filter = (x: any)=>{
+                            return x[property] < value;
+                        }
                     }
+
                 } else if (options.gt){
-                    filter = (x: any)=>{
-                        return x[property] > value;
+                    if(options.abs){
+                        filter = (x: any)=>{
+                            return Math.abs(x[property]) > Math.abs(value);
+                        }
+                    }  else {
+                        filter = (x: any)=>{
+                            return x[property] > value;
+                        }
                     }
                 }
                 else if (options.eq){
                     filter = (x: any)=>{
-                        return x[property].toString() == value.toString();
+                        return x[property].toString().toLowerCase() == value.toString().toLowerCase();
+                    }
+                }
+                else if (options.contains){
+                    filter = (x: any)=>{
+                        return x[property].toString().toLowerCase().indexOf(value.toString().toLowerCase()) > -1;
                     }
                 }
                 c.currentView.addFilter(filter);
